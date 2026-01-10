@@ -28,7 +28,7 @@ skyfice/
 
 ---
 
-📄 README.md
+ README.md
 
 `md
 
@@ -238,4 +238,157 @@ This is the correct, safe way to define an internal AI configuration.
 
  Markdown Section Files
 (These go in data/codex/sections/ — unchanged from earlier.)
+
+ Folder Structure for Admin UI
+
+Add this folder inside your skyfice/ repo:
+
+`
+skyfice/
+  admin-ui/
+    index.html
+    style.css
+    app.js
+`
+
+This gives you a self-contained admin dashboard that loads your Codex metadata and displays it.
+
+---
+
+ admin-ui/index.html
+
+`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SKYFICE Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>SKYFICE Admin Panel</h1>
+    <p>Control Panel for LAFSINFINITY INC.</p>
+  </header>
+
+  <nav>
+    <button onclick="loadDashboard()">Dashboard</button>
+    <button onclick="loadCodex()">730 CODEX</button>
+    <button onclick="loadConfig()">System Config</button>
+  </nav>
+
+  <main id="content">
+    <h2>Welcome to SKYFICE</h2>
+    <p>Select a section from the menu to begin.</p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
+`
+
+---
+
+🎨 admin-ui/style.css
+
+`css
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+header {
+  background: #111;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid gold;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  background: #222;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+nav button {
+  background: gold;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+nav button:hover {
+  background: #ffdf00;
+}
+
+main {
+  padding: 20px;
+}
+
+.codex-entry {
+  border: 1px solid gold;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #111;
+}
+`
+
+---
+
+⚙️ admin-ui/app.js
+
+`javascript
+async function loadDashboard() {
+  document.getElementById("content").innerHTML = `
+    <h2>Dashboard</h2>
+    <p>Admin Site: https://10BJTWO.univer.se</p>
+    <p>Contact Email: DIAMONDKNOTZ@gmail.com</p>
+    <p>Codex Sections Loaded: 730</p>
+  `;
+}
+
+async function loadCodex() {
+  const response = await fetch("../data/codex/730-codex.json");
+  const codex = await response.json();
+
+  let html = <h2>730 CODEX</h2>;
+
+  codex.sections.forEach(section => {
+    html += `
+      <div class="codex-entry">
+        <h3>${section.code} — ${section.title}</h3>
+        <p><strong>Category:</strong> ${section.category}</p>
+        <p><strong>Summary:</strong> ${section.summary}</p>
+        <p><strong>Legal Function:</strong> ${section.legalFunction}</p>
+        <p><strong>Text File:</strong> ${section.textFile}</p>
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+
+async function loadConfig() {
+  const skyficeConfig = await fetch("../config/skyfice.config.json").then(r => r.json());
+  const aiConfig = await fetch("../config/ai.config.json").then(r => r.json());
+
+  document.getElementById("content").innerHTML = `
+    <h2>System Configuration</h2>
+
+    <h3>SKYFICE Config</h3>
+    <pre>${JSON.stringify(skyficeConfig, null, 2)}</pre>
+
+    <h3>AI Config</h3>
+    <pre>${JSON.stringify(aiConfig, null, 2)}</pre>
+  `;
+}
+
 
